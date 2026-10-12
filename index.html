@@ -61,9 +61,8 @@ button,.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:
 <label><span data-i="sort"></span>
 <select id="so">
 <option value="" data-i="sRel"></option>
-<option value="P_PDATE_D desc" data-i="sNew"></option>
-<option value="P_PDATE_D asc" data-i="sOld"></option>
-<option value="CITED desc" data-i="sCit"></option>
+<option value="sort_date:y" data-i="sNew"></option>
+<option value="sort_cited:y" data-i="sCit"></option>
 </select></label>
 </div>
 
@@ -189,8 +188,8 @@ function search(){
   if(a&&b&&a>b){var x=a;a=b;b=x}
   var my=++req;
   msg("searching");
-  var url=API+"?query="+enc(buildQuery(q,tab,a,b))+"&format=json&resultType=core&pageSize=10";
-  if($("so").value)url+="&sort="+enc($("so").value);
+  var qs=buildQuery(q,tab,a,b)+($("so").value?" "+$("so").value:"");
+  var url=API+"?query="+enc(qs)+"&format=json&resultType=core&pageSize=10";
   fetch(url).then(function(x){if(!x.ok)throw new Error(x.status);return x.json()}).then(function(d){
     if(my!==req)return;
     var l=(d.resultList&&d.resultList.result)||[];
