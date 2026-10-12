@@ -165,14 +165,22 @@ function card(r){
   if(!p&&r.doi)h+='<a class="btn o" target="_blank" rel="noopener" href="https://doi.org/'+esc(r.doi)+'">'+esc(t("pub"))+'</a>';
   return h+"</div></div>";
 }
-function gcal(ti,s,e,loc){
+function gcal(ti,s,e,loc,url){
+  // Open Google Calendar's event editor with all event fields pre-filled.
+  // The event title comes from the seminar title, so the user only needs to save.
   var f=function(x){return x.replace(/-/g,"")};
   var n=new Date(e+"T00:00:00Z");n.setUTCDate(n.getUTCDate()+1);
-  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+enc(ti)+"&dates="+f(s)+"/"+f(n.toISOString().slice(0,10))+"&location="+enc(loc);
+  var params=new URLSearchParams();
+  params.set("text",ti||"");
+  params.set("dates",f(s)+"/"+f(n.toISOString().slice(0,10)));
+  if(loc)params.set("location",loc);
+  if(url)params.set("details","Official event website: "+url);
+  params.set("ctz","Asia/Jakarta");
+  return "https://calendar.google.com/calendar/u/0/r/eventedit?"+params.toString();
 }
 function evCard(v){
   var u=/^https?:\/\//.test(v.u||"")?v.u:"";
-  return '<div class="card ev"'+(u?' data-url="'+esc(u)+'"':'')+'><b>'+(u?'<a target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(v.t)+' ↗</a>':esc(v.t))+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l))+'">'+esc(t("cal"))+'</a>'+(u?'<a class="btn o" target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(t("official"))+'</a>':'')+'</div></div>';
+  return '<div class="card ev"'+(u?' data-url="'+esc(u)+'"':'')+'><b>'+(u?'<a target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(v.t)+' ↗</a>':esc(v.t))+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l,u))+'">'+esc(t("cal"))+'</a>'+(u?'<a class="btn o" target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(t("official"))+'</a>':'')+'</div></div>';
 }
 function draw(){
   var o=$("out");
