@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pustaka Dokter</title>
+<title>Clinical Literature &amp; Events Finder</title>
 <style>
 :root{--bg:#f6f8fa;--card:#fff;--tx:#1b2733;--mut:#5f6f7e;--ac:#0b6e8a;--ac2:#e3f2f7;--bd:#dde4ea;--warn:#fff4d6}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171d;--card:#18222b;--tx:#e8eef3;--mut:#98a8b6;--ac:#5cc0dc;--ac2:#1d3440;--bd:#2a3844;--warn:#3a3317}}
@@ -12,7 +12,7 @@
 body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
 main{max-width:760px;margin:0 auto;padding:16px}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px}
-h1{font-size:1.25rem;margin:4px 0 2px}
+h1{font-size:1.15rem;line-height:1.3;margin:4px 0 2px}
 .sub{color:var(--mut);font-size:.9rem;margin:0}
 .ctl{display:flex;gap:6px;flex-shrink:0}
 .ctl select{padding:8px;font-size:.9rem}
@@ -43,7 +43,7 @@ button,.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:
 <body>
 <main>
 <div class="top">
-<div><h1>Pustaka Dokter</h1><p class="sub" data-i="sub"></p></div>
+<div><h1>Clinical Literature &amp; Events Finder</h1><p class="sub" data-i="sub"></p></div>
 <div class="ctl">
 <select id="lang" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="id">Indonesia</option></select>
 <button id="th" class="ic" type="button"></button>
@@ -62,7 +62,6 @@ button,.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:
 <select id="so">
 <option value="" data-i="sRel"></option>
 <option value="sort_date:y" data-i="sNew"></option>
-<option value="sort_date:n" data-i="sOld"></option>
 <option value="sort_cited:y" data-i="sCit"></option>
 </select></label>
 </div>
@@ -79,17 +78,17 @@ button,.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:
 <script>
 var L={
 id:{sub:"Jurnal, riset, dan seminar kesehatan dalam satu tempat.",ph:"Contoh: glaucoma, diabetic retinopathy (gunakan kata kunci bahasa Inggris)",topic:"Topik",bSearch:"Cari",from:"Dari tahun",to:"Sampai",sort:"Urutan",sRel:"Paling relevan",sNew:"Terbaru",sOld:"Terlama",sCit:"Paling banyak dikutip",tJ:"Jurnal",tR:"Riset",tS:"Seminar",
-searching:"Mencari...",typeTopic:"Ketik topik dulu.",badYear:"Masukkan tahun dengan 4 angka (misalnya 2020), atau kosongkan. Tahun harus antara 1800 dan 2100.",none:"Tidak ada hasil. Coba kata kunci bahasa Inggris atau longgarkan filter tahun.",fail:"Gagal menghubungi Europe PMC. Periksa koneksi internet lalu coba lagi.",old:"artikel lama",cited:"dikutip {n}x",noAb:"Abstrak tidak tersedia.",pdf:"Unduh PDF (gratis)",src:"Buka sumber",pub:"Penerbit",
+searching:"Mencari...",typeTopic:"Ketik topik dulu.",none:"Tidak ada hasil. Coba kata kunci bahasa Inggris atau longgarkan filter tahun.",fail:"Gagal menghubungi Europe PMC. Periksa koneksi internet lalu coba lagi.",old:"artikel lama",cited:"dikutip {n}x",noAb:"Abstrak tidak tersedia.",pdf:"Unduh PDF (gratis)",src:"Buka sumber",pub:"Penerbit",
 loadEv:"Memuat seminar...",noEv:"Belum ada seminar mendatang.",failEv:"Daftar seminar gagal dimuat.",range:"{a} s/d {b}",source:"Sumber: ",cal:"+ Tambah ke kalender",official:"Situs resmi",srcThird:"kalender pihak ketiga, cek situs resmi",srcTwo:"2 sumber cocok",locCheck:"Lokasi: cek situs resmi",
 toDark:"Mode gelap",toLight:"Mode terang",
 foot:"Sumber artikel: Europe PMC (mencakup PubMed/MEDLINE). PDF hanya untuk artikel open access dan diunduh langsung dari sumbernya; aplikasi ini tidak menyimpan file. Selalu rujuk artikel asli sebelum mengambil keputusan klinis."},
 en:{sub:"Journals, research, and medical conferences in one place.",ph:"e.g. glaucoma, diabetic retinopathy (English keywords work best)",topic:"Topic",bSearch:"Search",from:"From year",to:"To year",sort:"Sort by",sRel:"Most relevant",sNew:"Newest",sOld:"Oldest",sCit:"Most cited",tJ:"Journals",tR:"Research",tS:"Seminars",
-searching:"Searching...",typeTopic:"Please enter a topic first.",badYear:"Enter a 4-digit year (for example, 2020), or leave it blank. Years must be between 1800 and 2100.",none:"No results. Try English keywords or loosen the year filter.",fail:"Could not reach Europe PMC. Check your internet connection and try again.",old:"older article",cited:"cited {n}x",noAb:"Abstract not available.",pdf:"Download PDF (free)",src:"Open source",pub:"Publisher",
+searching:"Searching...",typeTopic:"Please enter a topic first.",none:"No results. Try English keywords or loosen the year filter.",fail:"Could not reach Europe PMC. Check your internet connection and try again.",old:"older article",cited:"cited {n}x",noAb:"Abstract not available.",pdf:"Download PDF (free)",src:"Open source",pub:"Publisher",
 loadEv:"Loading seminars...",noEv:"No upcoming seminars yet.",failEv:"The seminar list could not be loaded.",range:"{a} to {b}",source:"Source: ",cal:"+ Add to calendar",official:"Official website",srcThird:"third-party calendar, check official site",srcTwo:"2 sources agree",locCheck:"Location: see official site",
 toDark:"Dark mode",toLight:"Light mode",
 foot:"Article source: Europe PMC (includes PubMed/MEDLINE). PDFs are offered only for open access articles and are downloaded directly from the original source; this app stores no files. Always consult the original article before making clinical decisions."},
 zh:{sub:"在一个地方查找期刊、研究和医学会议。",ph:"例如：glaucoma, diabetic retinopathy（建议使用英文关键词）",topic:"主题",bSearch:"搜索",from:"起始年份",to:"截止年份",sort:"排序",sRel:"最相关",sNew:"最新",sOld:"最早",sCit:"被引最多",tJ:"期刊",tR:"研究",tS:"会议",
-searching:"搜索中…",typeTopic:"请先输入主题。",badYear:"请输入四位年份（例如 2020），或留空。年份必须在 1800 到 2100 之间。",none:"没有结果。请尝试英文关键词或放宽年份筛选。",fail:"无法连接 Europe PMC。请检查网络后重试。",old:"较早文章",cited:"被引 {n} 次",noAb:"暂无摘要。",pdf:"下载 PDF（免费）",src:"打开来源",pub:"出版商",
+searching:"搜索中…",typeTopic:"请先输入主题。",none:"没有结果。请尝试英文关键词或放宽年份筛选。",fail:"无法连接 Europe PMC。请检查网络后重试。",old:"较早文章",cited:"被引 {n} 次",noAb:"暂无摘要。",pdf:"下载 PDF（免费）",src:"打开来源",pub:"出版商",
 loadEv:"正在加载会议…",noEv:"暂无即将举行的会议。",failEv:"会议列表加载失败。",range:"{a} 至 {b}",source:"来源：",cal:"+ 添加到日历",official:"官方网站",srcThird:"第三方日历，请核对官网",srcTwo:"两个来源一致",locCheck:"地点：请查看官网",
 toDark:"深色模式",toLight:"浅色模式",
 foot:"文章来源：Europe PMC（涵盖 PubMed/MEDLINE）。仅对开放获取文章提供 PDF，并直接从原始来源下载；本应用不保存任何文件。做出临床决定前，请务必查阅原文。"}
@@ -101,15 +100,13 @@ var $=function(i){return document.getElementById(i)};
 function enc(s){return encodeURIComponent(s)}
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML.replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
 function safeUrl(u){return /^https?:\/\//i.test(u||"")?u:""}
-function yr(v){v=(v||"").trim();return /^\d{4}$/.test(v)?Number(v):null}
-function validYearInput(v){v=(v||"").trim();return v===""||(/^\d{4}$/.test(v)&&Number(v)>=1800&&Number(v)<=2100)}
+function yr(v){v=(v||"").trim();return /^\d{4}$/.test(v)?v:""}
 var req=0;
 function txt(h){return new DOMParser().parseFromString(h||"","text/html").body.textContent||""}
 function t(k){return (L[lang]&&L[lang][k])||L.en[k]||k}
 function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function fmt(d){try{return new Date(d+"T00:00:00Z").toLocaleDateString(LOC[lang],{year:"numeric",month:"short",day:"numeric",timeZone:"UTC"})}catch(e){return d}}
-function localISODate(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 
 function isDark(){return theme?theme==="dark":(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)}
 function applyTheme(){
@@ -137,7 +134,7 @@ function buildQuery(q,tb,y1,y2){
     ?'(PUB_TYPE:"Review" OR PUB_TYPE:"Meta-Analysis" OR PUB_TYPE:"Systematic Review" OR PUB_TYPE:"Practice Guideline")'
     :'(PUB_TYPE:"Randomized Controlled Trial" OR PUB_TYPE:"Clinical Trial")';
   var s="("+q+") AND SRC:MED AND "+type+' NOT PUB_TYPE:"Retracted Publication"';
-  if(y1!==null||y2!==null)s+=" AND PUB_YEAR:["+(y1!==null?y1:1800)+" TO "+(y2!==null?y2:2100)+"]";
+  if(y1||y2)s+=" AND PUB_YEAR:["+(y1||1900)+" TO "+(y2||2100)+"]";
   return s;
 }
 function pdfUrl(r){
@@ -165,22 +162,14 @@ function card(r){
   if(!p&&r.doi)h+='<a class="btn o" target="_blank" rel="noopener" href="https://doi.org/'+esc(r.doi)+'">'+esc(t("pub"))+'</a>';
   return h+"</div></div>";
 }
-function gcal(ti,s,e,loc,url){
-  // Open Google Calendar's event editor with all event fields pre-filled.
-  // The event title comes from the seminar title, so the user only needs to save.
+function gcal(ti,s,e,loc){
   var f=function(x){return x.replace(/-/g,"")};
   var n=new Date(e+"T00:00:00Z");n.setUTCDate(n.getUTCDate()+1);
-  var params=new URLSearchParams();
-  params.set("text",ti||"");
-  params.set("dates",f(s)+"/"+f(n.toISOString().slice(0,10)));
-  if(loc)params.set("location",loc);
-  if(url)params.set("details","Official event website: "+url);
-  params.set("ctz","Asia/Jakarta");
-  return "https://calendar.google.com/calendar/u/0/r/eventedit?"+params.toString();
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+enc(ti)+"&dates="+f(s)+"/"+f(n.toISOString().slice(0,10))+"&location="+enc(loc);
 }
 function evCard(v){
   var u=/^https?:\/\//.test(v.u||"")?v.u:"";
-  return '<div class="card ev"'+(u?' data-url="'+esc(u)+'"':'')+'><b>'+(u?'<a target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(v.t)+' ↗</a>':esc(v.t))+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l,u))+'">'+esc(t("cal"))+'</a>'+(u?'<a class="btn o" target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(t("official"))+'</a>':'')+'</div></div>';
+  return '<div class="card ev"'+(u?' data-url="'+esc(u)+'"':'')+'><b>'+(u?'<a target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(v.t)+' ↗</a>':esc(v.t))+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l))+'">'+esc(t("cal"))+'</a>'+(u?'<a class="btn o" target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(t("official"))+'</a>':'')+'</div></div>';
 }
 function draw(){
   var o=$("out");
@@ -192,33 +181,29 @@ function draw(){
 function msg(key){view={k:"msg",key:key};draw()}
 
 function search(){
-  var my=++req;
   var q=$("q").value.trim();
   if((q.match(/"/g)||[]).length%2)q=q.replace(/"/g,"");
   if(!q){msg("typeTopic");return}
-  if(!validYearInput($("y1").value)||!validYearInput($("y2").value)){msg("badYear");return}
   var a=yr($("y1").value),b=yr($("y2").value);
-  if(a!==null&&b!==null&&a>b){var x=a;a=b;b=x}
+  if(a&&b&&a>b){var x=a;a=b;b=x}
+  var my=++req;
   msg("searching");
   var qs=buildQuery(q,tab,a,b)+($("so").value?" "+$("so").value:"");
   var url=API+"?query="+enc(qs)+"&format=json&resultType=core&pageSize=10";
-  var controller=window.AbortController?new AbortController():null;
-  var timer=controller?setTimeout(function(){controller.abort()},20000):null;
-  fetch(url,controller?{signal:controller.signal}:{}).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(d){
+  fetch(url).then(function(x){if(!x.ok)throw new Error(x.status);return x.json()}).then(function(d){
     if(my!==req)return;
     var l=(d.resultList&&d.resultList.result)||[];
     if(!l.length){msg("none");return}
     view={k:"res",list:l};draw();
-  }).catch(function(){if(my===req)msg("fail")}).finally(function(){if(timer)clearTimeout(timer)});
+  }).catch(function(){if(my===req)msg("fail")});
 }
 function seminars(){
   var my=++req;
   msg("loadEv");
   fetch("events.json").then(function(x){if(!x.ok)throw new Error(x.status);return x.json()}).then(function(l){
     if(my!==req)return;
-    if(!Array.isArray(l))throw new Error("Invalid events.json format");
-    var today=localISODate();
-    l=l.filter(function(v){return v&&/^\d{4}-\d{2}-\d{2}$/.test(v.s||"")&&/^\d{4}-\d{2}-\d{2}$/.test(v.e||"")&&v.e>=today&&v.s<=v.e&&typeof v.t==="string";}).sort(function(a,b){return a.s===b.s?0:(a.s<b.s?-1:1)});
+    var today=new Date().toISOString().slice(0,10);
+    l=l.filter(function(v){return v.e>=today}).sort(function(a,b){return a.s<b.s?-1:1});
     if(!l.length){msg("noEv");return}
     view={k:"ev",list:l};draw();
   }).catch(function(){if(my===req)msg("failEv")});

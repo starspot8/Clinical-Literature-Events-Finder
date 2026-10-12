@@ -1,4 +1,4 @@
-# Pustaka Dokter: Clinical Literature & Events Finder
+# Clinical Literature & Events Finder
 
 Search journals, clinical research, and medical conferences from a single search box. Literature comes from Europe PMC (including PubMed/MEDLINE), PDFs are offered only for open access articles, and events can be added to your calendar. Free, no account, no data stored.
 
@@ -6,7 +6,7 @@ Search journals, clinical research, and medical conferences from a single search
 
 ## Why this exists
 
-Busy clinicians need a fast way to find current evidence, older landmark papers, and upcoming meetings without juggling several websites. Pustaka Dokter puts all three in one place and works on any device.
+Busy clinicians need a fast way to find current evidence, older landmark papers, and upcoming meetings without juggling several websites. Clinical Literature & Events Finder puts all three in one place and works on any device.
 
 ## Features
 
@@ -85,17 +85,3 @@ Edit `events.json`. Each event looks like this:
 ## Acknowledgements
 
 Article data is provided by [Europe PMC](https://europepmc.org), which is funded by a consortium of research funders and hosted at EMBL-EBI.
-
-## Maintenance notes (2026-10)
-
-This revision includes defensive fixes identified during a static code review:
-
-- Added the missing “Oldest” sort option.
-- Invalid year inputs now produce a clear message instead of being silently ignored.
-- Year range handling now uses explicit null checks and supports a single-sided year range consistently.
-- Seminar end-date filtering uses the user's local calendar date rather than UTC, avoiding timezone boundary errors.
-- Seminar JSON is validated before rendering, and seminar sorting handles equal start dates consistently.
-- Article search requests time out after 20 seconds where `AbortController` is supported.
-- Starting a new search invalidates older in-flight searches, including when the new input is invalid, preventing stale results from replacing an error message.
-
-These changes are based on static source review and JavaScript syntax checks. They do not constitute a live end-to-end test of the Europe PMC API or of GitHub Pages deployment.
