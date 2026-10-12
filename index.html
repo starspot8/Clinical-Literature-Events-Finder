@@ -99,7 +99,10 @@ var API="https://www.ebi.ac.uk/europepmc/webservices/rest/search";
 var tab="j",view=null,lang="en",theme=null;
 var $=function(i){return document.getElementById(i)};
 function enc(s){return encodeURIComponent(s)}
-function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML.replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
+function safeUrl(u){return /^https?:\/\//i.test(u||"")?u:""}
+function yr(v){v=(v||"").trim();return /^\d{4}$/.test(v)?v:""}
+var req=0;
 function txt(h){return new DOMParser().parseFromString(h||"","text/html").body.textContent||""}
 function t(k){return (L[lang]&&L[lang][k])||L.en[k]||k}
 function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
@@ -149,7 +152,7 @@ function srcUrl(r){
 function card(r){
   var y=parseInt(r.pubYear,10),old=y&&y<new Date().getFullYear()-10;
   var ab=txt(r.abstractText);if(ab.length>320)ab=ab.slice(0,320)+"...";
-  var p=pdfUrl(r),s=srcUrl(r);
+  var p=safeUrl(pdfUrl(r)),s=srcUrl(r);
   var h='<div class="card"><b>'+esc(txt(r.title))+(old?'<span class="tag">'+esc(t("old"))+'</span>':"")+'</b>';
   h+='<div class="m">'+esc(r.authorString||"")+'</div>';
   h+='<div class="m">'+esc(r.journalTitle||"")+" · "+esc(r.pubYear||"")+(r.citedByCount?" · "+esc(t("cited").replace("{n}",r.citedByCount)):"")+'</div>';
@@ -180,24 +183,31 @@ function msg(key){view={k:"msg",key:key};draw()}
 
 function search(){
   var q=$("q").value.trim();
+  if((q.match(/"/g)||[]).length%2)q=q.replace(/"/g,"");
   if(!q){msg("typeTopic");return}
+  var a=yr($("y1").value),b=yr($("y2").value);
+  if(a&&b&&a>b){var x=a;a=b;b=x}
+  var my=++req;
   msg("searching");
-  var url=API+"?query="+enc(buildQuery(q,tab,$("y1").value.trim(),$("y2").value.trim()))+"&format=json&resultType=core&pageSize=10";
+  var url=API+"?query="+enc(buildQuery(q,tab,a,b))+"&format=json&resultType=core&pageSize=10";
   if($("so").value)url+="&sort="+enc($("so").value);
   fetch(url).then(function(x){if(!x.ok)throw new Error(x.status);return x.json()}).then(function(d){
+    if(my!==req)return;
     var l=(d.resultList&&d.resultList.result)||[];
     if(!l.length){msg("none");return}
     view={k:"res",list:l};draw();
-  }).catch(function(){msg("fail")});
+  }).catch(function(){if(my===req)msg("fail")});
 }
 function seminars(){
+  var my=++req;
   msg("loadEv");
-  fetch("events.json").then(function(x){return x.json()}).then(function(l){
+  fetch("events.json").then(function(x){if(!x.ok)throw new Error(x.status);return x.json()}).then(function(l){
+    if(my!==req)return;
     var today=new Date().toISOString().slice(0,10);
     l=l.filter(function(v){return v.e>=today}).sort(function(a,b){return a.s<b.s?-1:1});
     if(!l.length){msg("noEv");return}
     view={k:"ev",list:l};draw();
-  }).catch(function(){msg("failEv")});
+  }).catch(function(){if(my===req)msg("failEv")});
 }
 function setTab(x){document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-t")===x)})}
 function go(){$("flt").style.display=tab==="s"?"none":"flex";if(tab==="s")seminars();else search()}
