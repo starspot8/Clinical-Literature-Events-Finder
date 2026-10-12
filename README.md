@@ -85,3 +85,17 @@ Edit `events.json`. Each event looks like this:
 ## Acknowledgements
 
 Article data is provided by [Europe PMC](https://europepmc.org), which is funded by a consortium of research funders and hosted at EMBL-EBI.
+
+## Maintenance notes (2026-10)
+
+This revision includes defensive fixes identified during a static code review:
+
+- Added the missing “Oldest” sort option.
+- Invalid year inputs now produce a clear message instead of being silently ignored.
+- Year range handling now uses explicit null checks and supports a single-sided year range consistently.
+- Seminar end-date filtering uses the user's local calendar date rather than UTC, avoiding timezone boundary errors.
+- Seminar JSON is validated before rendering, and seminar sorting handles equal start dates consistently.
+- Article search requests time out after 20 seconds where `AbortController` is supported.
+- Starting a new search invalidates older in-flight searches, including when the new input is invalid, preventing stale results from replacing an error message.
+
+These changes are based on static source review and JavaScript syntax checks. They do not constitute a live end-to-end test of the Europe PMC API or of GitHub Pages deployment.
