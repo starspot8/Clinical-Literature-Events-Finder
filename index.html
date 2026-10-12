@@ -148,13 +148,24 @@ function srcUrl(r){
   if(r.doi)return "https://doi.org/"+r.doi;
   return "";
 }
+function jname(r){
+  if(r.journalTitle)return r.journalTitle;
+  var j=r.journalInfo&&r.journalInfo.journal;
+  return (j&&(j.title||j.medlineAbbreviation))||"";
+}
+function abs(html){
+  var s=String(html||"");
+  s=s.replace(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi,function(m,x){return " "+x.replace(/[:\s]+$/,"")+": "});
+  s=s.replace(/<\/?(p|div|li|ul|ol|br|sec|title|label)\b[^>]*>/gi," ");
+  return txt(s).replace(/\s+/g," ").trim();
+}
 function card(r){
   var y=parseInt(r.pubYear,10),old=y&&y<new Date().getFullYear()-10;
-  var ab=txt(r.abstractText);if(ab.length>320)ab=ab.slice(0,320)+"...";
+  var ab=abs(r.abstractText);if(ab.length>320)ab=ab.slice(0,320)+"...";
   var p=safeUrl(pdfUrl(r)),s=srcUrl(r);
   var h='<div class="card"><b>'+esc(txt(r.title))+(old?'<span class="tag">'+esc(t("old"))+'</span>':"")+'</b>';
   h+='<div class="m">'+esc(r.authorString||"")+'</div>';
-  h+='<div class="m">'+esc(r.journalTitle||"")+" · "+esc(r.pubYear||"")+(r.citedByCount?" · "+esc(t("cited").replace("{n}",r.citedByCount)):"")+'</div>';
+  h+='<div class="m">'+[jname(r),r.pubYear,r.citedByCount?t("cited").replace("{n}",r.citedByCount):""].filter(Boolean).map(esc).join(" · ")+'</div>';
   h+=ab?'<div class="ab">'+esc(ab)+'</div>':'<div class="ab m">'+esc(t("noAb"))+'</div>';
   h+='<div class="row">';
   if(p)h+='<a class="btn" target="_blank" rel="noopener" href="'+esc(p)+'">'+esc(t("pdf"))+'</a>';
