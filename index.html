@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pustaka Dokter</title>
 <style>
 :root{--bg:#f6f8fa;--card:#fff;--tx:#1b2733;--mut:#5f6f7e;--ac:#0b6e8a;--ac2:#e3f2f7;--bd:#dde4ea;--warn:#fff4d6}
-@media (prefers-color-scheme:dark){:root{--bg:#10171d;--card:#18222b;--tx:#e8eef3;--mut:#98a8b6;--ac:#5cc0dc;--ac2:#1d3440;--bd:#2a3844;--warn:#3a3317}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171d;--card:#18222b;--tx:#e8eef3;--mut:#98a8b6;--ac:#5cc0dc;--ac2:#1d3440;--bd:#2a3844;--warn:#3a3317}}
+:root[data-theme="dark"]{--bg:#10171d;--card:#18222b;--tx:#e8eef3;--mut:#98a8b6;--ac:#5cc0dc;--ac2:#1d3440;--bd:#2a3844;--warn:#3a3317}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
 main{max-width:760px;margin:0 auto;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px}
 h1{font-size:1.25rem;margin:4px 0 2px}
-.sub{color:var(--mut);font-size:.9rem;margin:0 0 14px}
+.sub{color:var(--mut);font-size:.9rem;margin:0}
+.ctl{display:flex;gap:6px;flex-shrink:0}
+.ctl select{padding:8px;font-size:.9rem}
+.ic{background:var(--card);color:var(--tx);border:1px solid var(--bd);padding:7px 11px;font-size:1.1rem;line-height:1}
 form{display:flex;gap:8px;margin-bottom:8px}
 input,select{padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font-size:1rem;min-width:0}
 #q{flex:1}
@@ -35,45 +40,93 @@ button,.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:
 </head>
 <body>
 <main>
-<h1>Pustaka Dokter</h1>
-<p class="sub">Jurnal, riset, dan seminar kesehatan dalam satu tempat.</p>
+<div class="top">
+<div><h1>Pustaka Dokter</h1><p class="sub" data-i="sub"></p></div>
+<div class="ctl">
+<select id="lang" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="id">Indonesia</option></select>
+<button id="th" class="ic" type="button"></button>
+</div>
+</div>
 
 <form id="f">
-<input id="q" value="glaucoma" placeholder="Contoh: glaucoma, diabetic retinopathy" aria-label="Topik">
-<button type="submit">Cari</button>
+<input id="q" value="glaucoma" data-ip="ph" data-ia="topic">
+<button type="submit" data-i="bSearch"></button>
 </form>
 
 <div class="filters" id="flt">
-<label>Dari tahun<input id="y1" inputmode="numeric" placeholder="mis. 1990"></label>
-<label>Sampai<input id="y2" inputmode="numeric" placeholder="mis. 2005"></label>
-<label>Urutan
+<label><span data-i="from"></span><input id="y1" inputmode="numeric" placeholder="1990"></label>
+<label><span data-i="to"></span><input id="y2" inputmode="numeric" placeholder="2005"></label>
+<label><span data-i="sort"></span>
 <select id="so">
-<option value="">Paling relevan</option>
-<option value="P_PDATE_D desc">Terbaru</option>
-<option value="P_PDATE_D asc">Terlama</option>
-<option value="CITED desc">Paling banyak dikutip</option>
+<option value="" data-i="sRel"></option>
+<option value="P_PDATE_D desc" data-i="sNew"></option>
+<option value="P_PDATE_D asc" data-i="sOld"></option>
+<option value="CITED desc" data-i="sCit"></option>
 </select></label>
 </div>
 
 <div class="tabs">
-<button class="tab on" data-t="j">Jurnal</button>
-<button class="tab" data-t="r">Riset</button>
-<button class="tab" data-t="s">Seminar</button>
+<button class="tab on" data-t="j" data-i="tJ"></button>
+<button class="tab" data-t="r" data-i="tR"></button>
+<button class="tab" data-t="s" data-i="tS"></button>
 </div>
 
 <div id="out"></div>
-<p class="foot">Sumber artikel: Europe PMC (mencakup PubMed/MEDLINE). PDF hanya untuk artikel open access dan diunduh langsung dari sumbernya; aplikasi ini tidak menyimpan file. Selalu rujuk artikel asli sebelum mengambil keputusan klinis.</p>
+<p class="foot" data-i="foot"></p>
 </main>
 <script>
+var L={
+id:{sub:"Jurnal, riset, dan seminar kesehatan dalam satu tempat.",ph:"Contoh: glaucoma, diabetic retinopathy (gunakan kata kunci bahasa Inggris)",topic:"Topik",bSearch:"Cari",from:"Dari tahun",to:"Sampai",sort:"Urutan",sRel:"Paling relevan",sNew:"Terbaru",sOld:"Terlama",sCit:"Paling banyak dikutip",tJ:"Jurnal",tR:"Riset",tS:"Seminar",
+searching:"Mencari...",typeTopic:"Ketik topik dulu.",none:"Tidak ada hasil. Coba kata kunci bahasa Inggris atau longgarkan filter tahun.",fail:"Gagal menghubungi Europe PMC. Periksa koneksi internet lalu coba lagi.",old:"artikel lama",cited:"dikutip {n}x",noAb:"Abstrak tidak tersedia.",pdf:"Unduh PDF (gratis)",src:"Buka sumber",pub:"Penerbit",
+loadEv:"Memuat seminar...",noEv:"Belum ada seminar mendatang.",failEv:"Daftar seminar gagal dimuat.",range:"{a} s/d {b}",source:"Sumber: ",cal:"+ Tambah ke kalender",official:"Situs resmi",srcThird:"kalender pihak ketiga, cek situs resmi",srcTwo:"2 sumber cocok",locCheck:"Lokasi: cek situs resmi",
+toDark:"Mode gelap",toLight:"Mode terang",
+foot:"Sumber artikel: Europe PMC (mencakup PubMed/MEDLINE). PDF hanya untuk artikel open access dan diunduh langsung dari sumbernya; aplikasi ini tidak menyimpan file. Selalu rujuk artikel asli sebelum mengambil keputusan klinis."},
+en:{sub:"Journals, research, and medical conferences in one place.",ph:"e.g. glaucoma, diabetic retinopathy (English keywords work best)",topic:"Topic",bSearch:"Search",from:"From year",to:"To year",sort:"Sort by",sRel:"Most relevant",sNew:"Newest",sOld:"Oldest",sCit:"Most cited",tJ:"Journals",tR:"Research",tS:"Seminars",
+searching:"Searching...",typeTopic:"Please enter a topic first.",none:"No results. Try English keywords or loosen the year filter.",fail:"Could not reach Europe PMC. Check your internet connection and try again.",old:"older article",cited:"cited {n}x",noAb:"Abstract not available.",pdf:"Download PDF (free)",src:"Open source",pub:"Publisher",
+loadEv:"Loading seminars...",noEv:"No upcoming seminars yet.",failEv:"The seminar list could not be loaded.",range:"{a} to {b}",source:"Source: ",cal:"+ Add to calendar",official:"Official website",srcThird:"third-party calendar, check official site",srcTwo:"2 sources agree",locCheck:"Location: see official site",
+toDark:"Dark mode",toLight:"Light mode",
+foot:"Article source: Europe PMC (includes PubMed/MEDLINE). PDFs are offered only for open access articles and are downloaded directly from the original source; this app stores no files. Always consult the original article before making clinical decisions."},
+zh:{sub:"在一个地方查找期刊、研究和医学会议。",ph:"例如：glaucoma, diabetic retinopathy（建议使用英文关键词）",topic:"主题",bSearch:"搜索",from:"起始年份",to:"截止年份",sort:"排序",sRel:"最相关",sNew:"最新",sOld:"最早",sCit:"被引最多",tJ:"期刊",tR:"研究",tS:"会议",
+searching:"搜索中…",typeTopic:"请先输入主题。",none:"没有结果。请尝试英文关键词或放宽年份筛选。",fail:"无法连接 Europe PMC。请检查网络后重试。",old:"较早文章",cited:"被引 {n} 次",noAb:"暂无摘要。",pdf:"下载 PDF（免费）",src:"打开来源",pub:"出版商",
+loadEv:"正在加载会议…",noEv:"暂无即将举行的会议。",failEv:"会议列表加载失败。",range:"{a} 至 {b}",source:"来源：",cal:"+ 添加到日历",official:"官方网站",srcThird:"第三方日历，请核对官网",srcTwo:"两个来源一致",locCheck:"地点：请查看官网",
+toDark:"深色模式",toLight:"浅色模式",
+foot:"文章来源：Europe PMC（涵盖 PubMed/MEDLINE）。仅对开放获取文章提供 PDF，并直接从原始来源下载；本应用不保存任何文件。做出临床决定前，请务必查阅原文。"}
+};
+var LOC={id:"id-ID",en:"en-GB",zh:"zh-CN"};
 var API="https://www.ebi.ac.uk/europepmc/webservices/rest/search";
-var tab="j";
+var tab="j",view=null,lang="en",theme=null;
 var $=function(i){return document.getElementById(i)};
 function enc(s){return encodeURIComponent(s)}
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
 function txt(h){return new DOMParser().parseFromString(h||"","text/html").body.textContent||""}
+function t(k){return (L[lang]&&L[lang][k])||L.en[k]||k}
+function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function fmt(d){try{return new Date(d+"T00:00:00Z").toLocaleDateString(LOC[lang],{year:"numeric",month:"short",day:"numeric",timeZone:"UTC"})}catch(e){return d}}
 
-function buildQuery(q,t,y1,y2){
-  var type=t==="j"
+function isDark(){return theme?theme==="dark":(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)}
+function applyTheme(){
+  var r=document.documentElement;
+  if(theme)r.setAttribute("data-theme",theme);else r.removeAttribute("data-theme");
+  var b=$("th"),d=isDark();
+  b.textContent=d?"☀":"☾";
+  b.setAttribute("aria-label",d?t("toLight"):t("toDark"));
+  b.title=d?t("toLight"):t("toDark");
+}
+function applyStatic(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-i]").forEach(function(e){e.textContent=t(e.getAttribute("data-i"))});
+  document.querySelectorAll("[data-ip]").forEach(function(e){e.placeholder=t(e.getAttribute("data-ip"))});
+  document.querySelectorAll("[data-ia]").forEach(function(e){e.setAttribute("aria-label",t(e.getAttribute("data-ia")))});
+  $("lang").value=lang;
+  applyTheme();
+}
+
+function srcText(s){if(/pihak ketiga/.test(s))return t("srcThird");if(/2 sumber/.test(s))return t("srcTwo");return s}
+function locText(l){return String(l).indexOf("Lokasi:")===0?t("locCheck"):l}
+
+function buildQuery(q,tb,y1,y2){
+  var type=tb==="j"
     ?'(PUB_TYPE:"Review" OR PUB_TYPE:"Meta-Analysis" OR PUB_TYPE:"Systematic Review" OR PUB_TYPE:"Practice Guideline")'
     :'(PUB_TYPE:"Randomized Controlled Trial" OR PUB_TYPE:"Clinical Trial")';
   var s="("+q+") AND SRC:MED AND "+type+' NOT PUB_TYPE:"Retracted Publication"';
@@ -95,53 +148,69 @@ function card(r){
   var y=parseInt(r.pubYear,10),old=y&&y<new Date().getFullYear()-10;
   var ab=txt(r.abstractText);if(ab.length>320)ab=ab.slice(0,320)+"...";
   var p=pdfUrl(r),s=srcUrl(r);
-  var h='<div class="card"><b>'+esc(txt(r.title))+(old?'<span class="tag">artikel lama</span>':"")+'</b>';
+  var h='<div class="card"><b>'+esc(txt(r.title))+(old?'<span class="tag">'+esc(t("old"))+'</span>':"")+'</b>';
   h+='<div class="m">'+esc(r.authorString||"")+'</div>';
-  h+='<div class="m">'+esc(r.journalTitle||"")+" · "+esc(r.pubYear||"")+(r.citedByCount?" · dikutip "+esc(r.citedByCount)+"x":"")+'</div>';
-  h+=ab?'<div class="ab">'+esc(ab)+'</div>':'<div class="ab m">Abstrak tidak tersedia.</div>';
+  h+='<div class="m">'+esc(r.journalTitle||"")+" · "+esc(r.pubYear||"")+(r.citedByCount?" · "+esc(t("cited").replace("{n}",r.citedByCount)):"")+'</div>';
+  h+=ab?'<div class="ab">'+esc(ab)+'</div>':'<div class="ab m">'+esc(t("noAb"))+'</div>';
   h+='<div class="row">';
-  if(p)h+='<a class="btn" target="_blank" rel="noopener" href="'+esc(p)+'">Unduh PDF (gratis)</a>';
-  if(s)h+='<a class="btn o" target="_blank" rel="noopener" href="'+esc(s)+'">Buka sumber</a>';
-  if(!p&&r.doi)h+='<a class="btn o" target="_blank" rel="noopener" href="https://doi.org/'+esc(r.doi)+'">Penerbit</a>';
+  if(p)h+='<a class="btn" target="_blank" rel="noopener" href="'+esc(p)+'">'+esc(t("pdf"))+'</a>';
+  if(s)h+='<a class="btn o" target="_blank" rel="noopener" href="'+esc(s)+'">'+esc(t("src"))+'</a>';
+  if(!p&&r.doi)h+='<a class="btn o" target="_blank" rel="noopener" href="https://doi.org/'+esc(r.doi)+'">'+esc(t("pub"))+'</a>';
   return h+"</div></div>";
 }
+function gcal(ti,s,e,loc){
+  var f=function(x){return x.replace(/-/g,"")};
+  var n=new Date(e+"T00:00:00Z");n.setUTCDate(n.getUTCDate()+1);
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+enc(ti)+"&dates="+f(s)+"/"+f(n.toISOString().slice(0,10))+"&location="+enc(loc);
+}
+function evCard(v){
+  return '<div class="card"><b>'+esc(v.t)+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l))+'">'+esc(t("cal"))+'</a><a class="btn o" target="_blank" rel="noopener" href="'+esc(v.u)+'">'+esc(t("official"))+'</a></div></div>';
+}
+function draw(){
+  var o=$("out");
+  if(!view){o.innerHTML="";return}
+  if(view.k==="msg")o.innerHTML='<div class="msg">'+esc(t(view.key))+'</div>';
+  else if(view.k==="res")o.innerHTML=view.list.map(card).join("");
+  else if(view.k==="ev")o.innerHTML=view.list.map(evCard).join("");
+}
+function msg(key){view={k:"msg",key:key};draw()}
+
 function search(){
   var q=$("q").value.trim();
-  if(!q){$("out").innerHTML='<div class="msg">Ketik topik dulu.</div>';return}
-  $("out").innerHTML='<div class="msg">Mencari...</div>';
+  if(!q){msg("typeTopic");return}
+  msg("searching");
   var url=API+"?query="+enc(buildQuery(q,tab,$("y1").value.trim(),$("y2").value.trim()))+"&format=json&resultType=core&pageSize=10";
   if($("so").value)url+="&sort="+enc($("so").value);
   fetch(url).then(function(x){if(!x.ok)throw new Error(x.status);return x.json()}).then(function(d){
     var l=(d.resultList&&d.resultList.result)||[];
-    if(!l.length){$("out").innerHTML='<div class="msg">Tidak ada hasil. Coba kata kunci bahasa Inggris atau longgarkan filter tahun.</div>';return}
-    $("out").innerHTML=l.map(card).join("");
-  }).catch(function(){
-    $("out").innerHTML='<div class="msg">Gagal menghubungi Europe PMC. Periksa koneksi internet lalu coba lagi.</div>';
-  });
-}
-function gcal(t,s,e,loc){
-  var f=function(x){return x.replace(/-/g,"")};
-  var n=new Date(e+"T00:00:00Z");n.setUTCDate(n.getUTCDate()+1);
-  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+enc(t)+"&dates="+f(s)+"/"+f(n.toISOString().slice(0,10))+"&location="+enc(loc);
+    if(!l.length){msg("none");return}
+    view={k:"res",list:l};draw();
+  }).catch(function(){msg("fail")});
 }
 function seminars(){
-  $("out").innerHTML='<div class="msg">Memuat seminar...</div>';
+  msg("loadEv");
   fetch("events.json").then(function(x){return x.json()}).then(function(l){
     var today=new Date().toISOString().slice(0,10);
     l=l.filter(function(v){return v.e>=today}).sort(function(a,b){return a.s<b.s?-1:1});
-    if(!l.length){$("out").innerHTML='<div class="msg">Belum ada seminar mendatang.</div>';return}
-    $("out").innerHTML=l.map(function(v){
-      return '<div class="card"><b>'+esc(v.t)+'</b><div class="m">'+esc(v.s)+" s/d "+esc(v.e)+" · "+esc(v.l)+'</div><div class="m">Sumber: '+esc(v.src)+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l))+'">+ Tambah ke kalender</a><a class="btn o" target="_blank" rel="noopener" href="'+esc(v.u)+'">Situs resmi</a></div></div>';
-    }).join("");
-  }).catch(function(){$("out").innerHTML='<div class="msg">Daftar seminar gagal dimuat.</div>'});
+    if(!l.length){msg("noEv");return}
+    view={k:"ev",list:l};draw();
+  }).catch(function(){msg("failEv")});
 }
+function setTab(x){document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-t")===x)})}
 function go(){$("flt").style.display=tab==="s"?"none":"flex";if(tab==="s")seminars();else search()}
-$("f").addEventListener("submit",function(e){e.preventDefault();if(tab==="s")tab="j",setTab("j");go()});
-function setTab(t){document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-t")===t)})}
+
+$("f").addEventListener("submit",function(e){e.preventDefault();if(tab==="s"){tab="j";setTab("j")}go()});
 document.querySelectorAll(".tab").forEach(function(b){
   b.addEventListener("click",function(){tab=b.getAttribute("data-t");setTab(tab);go()});
 });
 $("so").addEventListener("change",function(){if(tab!=="s")search()});
+$("lang").addEventListener("change",function(){lang=$("lang").value;save("pd_lang",lang);applyStatic();draw()});
+$("th").addEventListener("click",function(){theme=isDark()?"light":"dark";save("pd_theme",theme);applyTheme()});
+
+var sl=load("pd_lang"),st=load("pd_theme");
+if(sl&&L[sl])lang=sl;else{var nl=(navigator.language||"en").toLowerCase();lang=nl.indexOf("zh")===0?"zh":nl.indexOf("id")===0?"id":"en"}
+if(st==="light"||st==="dark")theme=st;
+applyStatic();
 go();
 </script>
 </body>
