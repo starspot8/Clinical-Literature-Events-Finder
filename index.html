@@ -36,6 +36,8 @@ button,.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:
 .tag{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:99px;background:var(--warn);margin-left:6px}
 .msg{padding:12px;color:var(--mut)}
 .foot{color:var(--mut);font-size:.8rem;margin-top:18px}
+.ev{cursor:pointer}.ev:hover{border-color:var(--ac)}
+.card b a{color:var(--tx);text-decoration:none}.card b a:hover{color:var(--ac);text-decoration:underline}
 </style>
 </head>
 <body>
@@ -164,7 +166,8 @@ function gcal(ti,s,e,loc){
   return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+enc(ti)+"&dates="+f(s)+"/"+f(n.toISOString().slice(0,10))+"&location="+enc(loc);
 }
 function evCard(v){
-  return '<div class="card"><b>'+esc(v.t)+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l))+'">'+esc(t("cal"))+'</a><a class="btn o" target="_blank" rel="noopener" href="'+esc(v.u)+'">'+esc(t("official"))+'</a></div></div>';
+  var u=/^https?:\/\//.test(v.u||"")?v.u:"";
+  return '<div class="card ev"'+(u?' data-url="'+esc(u)+'"':'')+'><b>'+(u?'<a target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(v.t)+' ↗</a>':esc(v.t))+'</b><div class="m">'+esc(t("range").replace("{a}",fmt(v.s)).replace("{b}",fmt(v.e)))+" · "+esc(locText(v.l))+'</div><div class="m">'+esc(t("source"))+esc(srcText(v.src))+'</div><div class="row"><a class="btn" target="_blank" rel="noopener" href="'+esc(gcal(v.t,v.s,v.e,v.l))+'">'+esc(t("cal"))+'</a>'+(u?'<a class="btn o" target="_blank" rel="noopener" href="'+esc(u)+'">'+esc(t("official"))+'</a>':'')+'</div></div>';
 }
 function draw(){
   var o=$("out");
@@ -202,6 +205,11 @@ function go(){$("flt").style.display=tab==="s"?"none":"flex";if(tab==="s")semina
 $("f").addEventListener("submit",function(e){e.preventDefault();if(tab==="s"){tab="j";setTab("j")}go()});
 document.querySelectorAll(".tab").forEach(function(b){
   b.addEventListener("click",function(){tab=b.getAttribute("data-t");setTab(tab);go()});
+});
+$("out").addEventListener("click",function(e){
+  if(e.target.closest("a,button"))return;
+  var c=e.target.closest(".ev");
+  if(c&&c.getAttribute("data-url"))window.open(c.getAttribute("data-url"),"_blank","noopener");
 });
 $("so").addEventListener("change",function(){if(tab!=="s")search()});
 $("lang").addEventListener("change",function(){lang=$("lang").value;save("pd_lang",lang);applyStatic();draw()});
