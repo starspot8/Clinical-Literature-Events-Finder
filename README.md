@@ -13,7 +13,7 @@ Busy clinicians need a fast way to find current evidence, older landmark papers,
 - **Journals tab:** reviews, meta-analyses, systematic reviews, and practice guidelines
 - **Research tab:** randomized controlled trials and clinical trials
 - **Top 10 results** per search, with abstract preview, authors, journal, year, and citation count
-- **Historical search:** filter by year range and sort by newest, oldest, or most cited
+- **Historical search:** filter by year range (for example 1990 to 2005) and sort by relevance, newest, or most cited
 - **Retraction filter:** retracted publications are excluded
 - **Legal PDFs only:** a download button appears only when the article is open access, and the file is fetched directly from the original source
 - **Seminars tab:** upcoming conferences with official links and one-click "Add to calendar" (Google Calendar)
