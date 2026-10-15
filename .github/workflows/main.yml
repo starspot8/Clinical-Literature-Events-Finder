@@ -18,7 +18,7 @@ jobs:
 
       - name: Jalankan pembaruan
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python3 script/update_events.py
 
       - name: Simpan perubahan dan terbitkan ulang situs
