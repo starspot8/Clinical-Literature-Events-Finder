@@ -5,7 +5,7 @@
    mendatang, memvalidasi ketat, lalu menambahkan yang lolos.
 Acara yang meragukan tidak ditambahkan, hanya dilaporkan di laporan.md.
 """
-import json, os, re, datetime, urllib.request, urllib.parse
+import json, os, re, datetime, urllib.request, urllib.parse, urllib.error
 
 # (nama, halaman resmi, boleh ditambah otomatis?)
 # True  = acara ditambah otomatis hanya bila alamat acaranya satu domain dengan halaman sumber.
@@ -23,11 +23,23 @@ SOURCES = [
     ("SOE Ophthagenda (kalender gabungan)", "https://soevision.org/ophthagenda/list/", False),
 ]
 
-MODEL = os.environ.get("ANTHROPIC_MODEL") or "claude-haiku-5-5"
+# Model dicoba berurutan; kalau satu tidak dikenal (HTTP 404/400), lanjut ke berikutnya.
+MODELS = [m for m in [os.environ.get("ANTHROPIC_MODEL"), "claude-haiku-5-5", "claude-sonnet-4-6"] if m]
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 TODAY = datetime.date.today()
 STOP = {"annual", "meeting", "congress", "society", "european", "american", "asia", "pacific",
         "the", "and", "for", "new", "with", "international", "academy", "association"}
+
+
+def describe(ex):
+    """Ringkasan galat yang mudah dibaca, termasuk kode HTTP dan pesan dari server."""
+    if isinstance(ex, urllib.error.HTTPError):
+        try:
+            body = ex.read().decode("utf-8", "ignore").replace("\n", " ")[:220]
+        except Exception:
+            body = ""
+        return "HTTP {} {}".format(ex.code, body).strip()
+    return (type(ex).__name__ + " " + str(ex))[:200]
 
 
 def http_get(url):
@@ -60,14 +72,23 @@ def ask(name, url, text):
         "Never guess. Omit any event whose exact dates or URL are not stated on the page. If there are none, return [].\n\n"
         "PAGE TEXT:\n" + text
     )
-    body = json.dumps({"model": MODEL, "max_tokens": 2000,
-                       "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages", data=body,
-        headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        data = json.loads(r.read().decode("utf-8"))
-    return "".join(b.get("text", "") for b in data.get("content", []))
+    last = None
+    for model in MODELS:
+        body = json.dumps({"model": model, "max_tokens": 2000,
+                           "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages", data=body,
+            headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                data = json.loads(r.read().decode("utf-8"))
+            return "".join(b.get("text", "") for b in data.get("content", []))
+        except urllib.error.HTTPError as e:
+            if e.code in (400, 404):
+                last = e
+                continue
+            raise
+    raise last
 
 
 def parse_json(s):
@@ -128,9 +149,14 @@ def main():
     else:
         for name, url, auto in SOURCES:
             try:
-                items = parse_json(ask(name, url, page_text(http_get(url), url)))
+                html = http_get(url)
             except Exception as ex:
-                errors.append("{}: gagal diproses ({})".format(name, type(ex).__name__))
+                errors.append("{}: gagal membuka halaman ({})".format(name, describe(ex)))
+                continue
+            try:
+                items = parse_json(ask(name, url, page_text(html, url)))
+            except Exception as ex:
+                errors.append("{}: gagal dibaca AI ({})".format(name, describe(ex)))
                 continue
             for c in items:
                 if not isinstance(c, dict) or not valid(c):
