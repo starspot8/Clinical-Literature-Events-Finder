@@ -1,9 +1,15 @@
 [
-  {"t":"INASCRS 2026 (8th Biennial Meeting, bersama INACORS)","s":"2026-11-13","e":"2026-11-14","l":"Pullman Central Park, Jakarta","u":"https://8th.inascrs.org/","src":"8th.inascrs.org"},
-  {"t":"COPHy 2027 (18th Congress on Controversies in Ophthalmology)","s":"2027-02-26","e":"2027-02-27","l":"Milan, Italy","u":"https://cophy.comtecmed.com/","src":"cophy.comtecmed.com"},
-  {"t":"APAO 2027 (42nd Asia-Pacific Academy of Ophthalmology Congress)","s":"2027-03-18","e":"2027-03-21","l":"Suntec Singapore Convention & Exhibition Centre, Singapore","u":"https://2027.apaophth.org/","src":"2027.apaophth.org"},
-  {"t":"ASCRS 2027 Annual Meeting","s":"2027-04-02","e":"2027-04-05","l":"San Diego, California, USA","u":"https://www.ascrs.org/Meetings/Next-Year","src":"ascrs.org"},
-  {"t":"ARVO 2027 Annual Meeting","s":"2027-05-02","e":"2027-05-06","l":"San Diego Convention Center, USA","u":"https://www.arvo.org/annual-meeting","src":"arvo.org"},
-  {"t":"SOE 2027 (25th Congress, European Society of Ophthalmology)","s":"2027-06-18","e":"2027-06-20","l":"Megaron Athens International Conference Centre, Athens, Greece","u":"https://soe2027.soevision.org/","src":"soe2027.soevision.org"},
-  {"t":"AAO 2027 Annual Meeting","s":"2027-11-12","e":"2027-11-15","l":"Venetian Expo & Hotel, Las Vegas, USA","u":"https://aao.org/annual-meeting/past-and-future-meetings","src":"aao.org"}
+  {"t": "INASCRS 2026 (8th Biennial Meeting, bersama INACORS)", "s": "2026-11-13", "e": "2026-11-14", "l": "Pullman Central Park, Jakarta", "u": "https://8th.inascrs.org/", "src": "8th.inascrs.org"},
+  {"t": "ACS 2026 (10th Asia Cornea Society Biennial Scientific Meeting)", "s": "2026-11-27", "e": "2026-11-29", "l": "Hong Kong", "u": "https://asiacorneasociety.org/", "src": "asiacorneasociety.org"},
+  {"t": "COPHy 2027 (18th Congress on Controversies in Ophthalmology)", "s": "2027-02-26", "e": "2027-02-27", "l": "Milan, Italy", "u": "https://cophy.comtecmed.com/", "src": "cophy.comtecmed.com"},
+  {"t": "AAPOS 2027 (52nd Annual Meeting, American Association for Pediatric Ophthalmology & Strabismus)", "s": "2027-03-17", "e": "2027-03-21", "l": "Marriott Marquis, Washington, DC, USA", "u": "https://aapos.org/education-and-events/annual-meeting2027", "src": "aapos.org"},
+  {"t": "APAO 2027 (42nd Asia-Pacific Academy of Ophthalmology Congress)", "s": "2027-03-18", "e": "2027-03-21", "l": "Suntec Singapore Convention & Exhibition Centre, Singapore", "u": "https://2027.apaophth.org/", "src": "2027.apaophth.org"},
+  {"t": "ASCRS 2027 Annual Meeting", "s": "2027-04-02", "e": "2027-04-05", "l": "San Diego, California, USA", "u": "https://www.ascrs.org/Meetings/Next-Year", "src": "ascrs.org"},
+  {"t": "ARVO 2027 Annual Meeting", "s": "2027-05-02", "e": "2027-05-06", "l": "San Diego Convention Center, USA", "u": "https://www.arvo.org/annual-meeting", "src": "arvo.org"},
+  {"t": "APACRS 2027 (39th Asia-Pacific Association of Cataract & Refractive Surgeons)", "s": "2027-06-03", "e": "2027-06-05", "l": "Bali, Indonesia", "u": "https://apacrs.org/meetings.asp?info=3", "src": "apacrs.org"},
+  {"t": "SOE 2027 (25th Congress, European Society of Ophthalmology)", "s": "2027-06-18", "e": "2027-06-20", "l": "Megaron Athens International Conference Centre, Athens, Greece", "u": "https://soe2027.soevision.org/", "src": "soe2027.soevision.org"},
+  {"t": "ASRS 2027 Annual Meeting (American Society of Retina Specialists)", "s": "2027-07-28", "e": "2027-07-31", "l": "San Francisco, California, USA", "u": "https://www.asrs.org/annual-meeting/future-annual-meetings", "src": "asrs.org"},
+  {"t": "EURETINA 2027 (27th Congress of the European Society of Retina Specialists)", "s": "2027-09-16", "e": "2027-09-19", "l": "Venue to be announced", "u": "https://euretina.org/future-meetings/", "src": "euretina.org"},
+  {"t": "ESCRS 2027 (45th Congress of the European Society of Cataract & Refractive Surgeons)", "s": "2027-10-15", "e": "2027-10-19", "l": "IFEMA Madrid, Spain", "u": "https://www.escrs.org/", "src": "escrs.org"},
+  {"t": "AAO 2027 Annual Meeting", "s": "2027-11-12", "e": "2027-11-15", "l": "Venetian Expo & Hotel, Las Vegas, USA", "u": "https://aao.org/annual-meeting/past-and-future-meetings", "src": "aao.org"}
 ]
