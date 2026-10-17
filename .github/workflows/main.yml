@@ -1,4 +1,4 @@
-name: Update seminar otomatis
+Name: Update seminar otomatis
 
 on:
   schedule:
@@ -35,7 +35,9 @@ jobs:
           fi
 
       - name: Buat Issue laporan
-        if: hashFiles('laporan.md') != ''
+        if: |
+          success() && 
+          (git status --porcelain laporan.md | grep -q .)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
