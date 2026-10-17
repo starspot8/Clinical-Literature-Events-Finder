@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """Update otomatis events.json:
 1. Menghapus acara yang sudah lewat.
-2. Membaca halaman resmi tiap organisasi (daftar SOURCES), meminta Claude mengekstrak acara
+2. Membaca halaman resmi tiap organisasi (daftar SOURCES), meminta AI mengekstrak acara
    mendatang, memvalidasi ketat, lalu menambahkan yang lolos.
 Acara yang meragukan tidak ditambahkan, hanya dilaporkan di laporan.md.
+AI yang dipakai: Google Gemini (kunci gratis dari Google AI Studio, disimpan sebagai secret GEMINI_API_KEY).
 """
-import json, os, re, datetime, urllib.request, urllib.parse, urllib.error
+import json, os, re, time, datetime, urllib.request, urllib.parse, urllib.error
 
 # (nama, halaman resmi, boleh ditambah otomatis?)
 # True  = acara ditambah otomatis hanya bila alamat acaranya satu domain dengan halaman sumber.
 # False = hanya dilaporkan untuk dicek manual (misalnya kalender gabungan).
+# ARVO sengaja tidak dimasukkan: situsnya memblokir pembacaan otomatis (HTTP 403).
 SOURCES = [
     ("ACS", "https://asiacorneasociety.org/", True),
     ("APACRS", "https://apacrs.org/meetings.asp?info=3", True),
@@ -17,15 +19,15 @@ SOURCES = [
     ("AAO", "https://aao.org/annual-meeting/past-and-future-meetings", True),
     ("ASRS", "https://www.asrs.org/annual-meeting/future-annual-meetings", True),
     ("AAPOS", "https://aapos.org/education-and-events/meetings-future", True),
-    ("ARVO", "https://www.arvo.org/annual-meeting", True),
     ("ASCRS", "https://www.ascrs.org/Meetings/Next-Year", True),
-    ("PERDAMI", "https://perdami.or.id/meetings/", True),
+    ("PERDAMI", "https://perdami.or.id/meetings", True),
     ("SOE Ophthagenda (kalender gabungan)", "https://soevision.org/ophthagenda/list/", False),
 ]
 
-# Model dicoba berurutan; kalau satu tidak dikenal (HTTP 404/400), lanjut ke berikutnya.
-MODELS = [m for m in [os.environ.get("ANTHROPIC_MODEL"), "claude-haiku-5-5", "claude-sonnet-4-6"] if m]
-API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+# Model dicoba berurutan; kalau satu tidak tersedia atau kena batas (HTTP 400/404/429/503), lanjut ke berikutnya.
+MODELS = [m for m in [os.environ.get("GEMINI_MODEL"), "gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-3-flash-preview"] if m]
+API_KEY = os.environ.get("GEMINI_API_KEY", "")
+PAUSE = 6  # detik jeda antar permintaan, supaya tidak melewati batas kecepatan paket gratis
 TODAY = datetime.date.today()
 STOP = {"annual", "meeting", "congress", "society", "european", "american", "asia", "pacific",
         "the", "and", "for", "new", "with", "international", "academy", "association"}
@@ -74,18 +76,24 @@ def ask(name, url, text):
     )
     last = None
     for model in MODELS:
-        body = json.dumps({"model": model, "max_tokens": 2000,
-                           "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
+        body = json.dumps({
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
+        }).encode("utf-8")
         req = urllib.request.Request(
-            "https://api.anthropic.com/v1/messages", data=body,
-            headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+            "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent",
+            data=body, headers={"x-goog-api-key": API_KEY, "content-type": "application/json"})
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
                 data = json.loads(r.read().decode("utf-8"))
-            return "".join(b.get("text", "") for b in data.get("content", []))
+            cands = data.get("candidates") or []
+            parts = (cands[0].get("content") or {}).get("parts") or [] if cands else []
+            return "".join(p.get("text", "") for p in parts)
         except urllib.error.HTTPError as e:
-            if e.code in (400, 404):
+            if e.code in (400, 404, 429, 503):
                 last = e
+                if e.code in (429, 503):
+                    time.sleep(PAUSE * 3)
                 continue
             raise
     raise last
@@ -145,7 +153,7 @@ def main():
     added, maybe, errors = [], [], []
 
     if not API_KEY:
-        errors.append("ANTHROPIC_API_KEY belum dipasang. Penambahan acara baru dilewati; penghapusan acara yang sudah lewat tetap berjalan.")
+        errors.append("GEMINI_API_KEY belum dipasang. Penambahan acara baru dilewati; penghapusan acara yang sudah lewat tetap berjalan.")
     else:
         for name, url, auto in SOURCES:
             try:
@@ -158,6 +166,7 @@ def main():
             except Exception as ex:
                 errors.append("{}: gagal dibaca AI ({})".format(name, describe(ex)))
                 continue
+            time.sleep(PAUSE)
             for c in items:
                 if not isinstance(c, dict) or not valid(c):
                     continue
