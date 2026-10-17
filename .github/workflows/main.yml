@@ -1,9 +1,9 @@
-Name: Update seminar otomatis
+name: Update seminar otomatis
 
 on:
   schedule:
-    - cron: "0 1 * * 1"   # tiap Senin, 08:00 WIB
-  workflow_dispatch:       # tombol "Run workflow" untuk mencoba kapan saja
+    - cron: "0 1 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: write
