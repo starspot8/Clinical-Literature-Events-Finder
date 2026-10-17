@@ -2,8 +2,8 @@ name: Update seminar otomatis
 
 on:
   schedule:
-    - cron: "0 1 * * 1"
-  workflow_dispatch:
+    - cron: "0 1 * * 1"   # tiap Senin, 08:00 WIB
+  workflow_dispatch:       # tombol "Run workflow" untuk mencoba kapan saja
 
 permissions:
   contents: write
@@ -45,3 +45,4 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --title "Update seminar $(date +%Y-%m-%d)" \
             --body-file laporan.md
+
